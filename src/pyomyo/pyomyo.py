@@ -32,6 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	Edited by PerlinWarp
 		https://github.com/PerlinWarp/pyomyo
 
+	Edited by Hyung-il Kim (hyungilkim)
+
 Warning, when using this library in a multithreaded way,
 know that any function called on Myo_Raw, may try to use the serial port,
 in windows if this is tried from a seperate thread you will get a permission error
@@ -71,6 +73,11 @@ class emg_mode(enum.Enum):
 	PREPROCESSED = 1 # Sends 50Hz rectified and band pass filtered data
 	FILTERED = 2 # Sends 200Hz filtered but not rectified data
 	RAW = 3 # Sends raw 200Hz data from the ADC ranged between -128 and 127
+
+class unlock_type(enum.Enum):
+	LOCK = 0		# Re-lock immediately.
+	TIMED = 1		# Unlock now and re-lock after a fixed timeout.
+	HOLD = 2		# Unlock now and remain unlocked until a lock command is received.
 
 class Arm(enum.Enum):
 	UNKNOWN = 0
@@ -333,6 +340,9 @@ class Myo(object):
 			# Stop the Myo Disconnecting
 			self.sleep_mode(1)
 
+			# Remain unlocked
+			self.unlock(2)
+
 			# enable battery notifications
 			self.write_attr(0x12, b'\x01\x10')
 
@@ -415,6 +425,9 @@ class Myo(object):
 		- Alvaro Villoslada (Alvipe)
 		'''
 		self.write_attr(0x19, b'\x04\x00')
+
+	def unlock(self, type):
+		self.write_attr(0x19, pack('3B', b'\x0a', 1, type))
 
 	def start_raw(self):
 		'''
