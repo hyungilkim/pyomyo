@@ -74,6 +74,13 @@ class emg_mode(enum.Enum):
 	FILTERED = 2 # Sends 200Hz filtered but not rectified data
 	RAW = 3 # Sends raw 200Hz data from the ADC ranged between -128 and 127
 
+class imu_mode(enum.Enum):
+	NONE = 0 		# Do not send IMU data or events.
+	DATA = 1		# Send IMU data streams (accelerometer, gyroscope, and orientation).
+	EVENTS = 2		# Send motion events detected by the IMU (e.g. taps).
+	ALL = 3			# Send both IMU data streams and motion events.
+	RAW = 4			# Send raw IMU data streams.
+
 class unlock_type(enum.Enum):
 	LOCK = 0		# Re-lock immediately.
 	TIMED = 1		# Unlock now and re-lock after a fixed timeout.
